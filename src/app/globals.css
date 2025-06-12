@@ -24,3 +24,28 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Убираем системные элементы браузера в Telegram */
+body.telegram-mode {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Убираем горизонтальную прокрутку */
+.telegram-webapp {
+  overflow-x: hidden;
+}
+
+/* Анимация загрузки */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

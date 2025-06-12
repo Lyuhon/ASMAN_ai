@@ -1,103 +1,292 @@
-import Image from "next/image";
+// // app/page.js
+// 'use client'
+// import { useState, useEffect } from 'react'
+// import Link from 'next/link'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+// export default function HomePage() {
+//   const [user, setUser] = useState({ name: 'Имя Фамилия' })
+//   const [stats, setStats] = useState({
+//     totalReports: 12,
+//     lastReport: '2024-06-08'
+//   })
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+//   return (
+//     <div className="p-6 pb-24">
+//       {/* Header */}
+//       <div className="mb-8">
+//         <div className="flex items-center justify-between mb-4">
+//           <div>
+//             <h1 className="text-2xl font-bold text-gray-900">
+//               {user.name}!
+//             </h1>
+//             <p className="text-gray-600 mt-1">Добро пожаловать в Asman AI</p>
+//           </div>
+//           <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+//             <span className="text-emerald-800 font-semibold text-lg">
+//               {user.name.split(' ').map(n => n[0]).join('')}
+//             </span>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Stats */}
+//       {/* <div className="grid grid-cols-2 gap-4 mb-8">
+//         <div className="card text-center">
+//           <div className="text-3xl font-bold text-emerald-800 mb-2">
+//             {stats.totalReports}
+//           </div>
+//           <div className="text-gray-600 text-sm">Всего отчетов</div>
+//         </div>
+//         <div className="card text-center">
+//           <div className="text-sm font-semibold text-emerald-800 mb-2">
+//             {new Date(stats.lastReport).toLocaleDateString('ru-RU')}
+//           </div>
+//           <div className="text-gray-600 text-sm">Последний отчет</div>
+//         </div>
+//       </div> */}
+
+//       {/* Quick Actions */}
+//       <div className="space-y-4">
+//         <h2 className="text-lg font-semibold text-gray-900 mb-4">Быстрые действия</h2>
+
+//         <Link href="/create-report" className="block">
+//           <div className="bg-gradient-to-r from-emerald-800 to-emerald-700 rounded-2xl p-6 text-white">
+//             <div className="flex items-center justify-between">
+//               <div>
+//                 <h3 className="font-semibold text-lg mb-2">Создать отчет</h3>
+//                 <p className="text-emerald-100 text-sm">Загрузите файлы и создайте новый отчет</p>
+//               </div>
+//               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+//                 <svg className="w-6 h-6" fill="#006045" viewBox="0 0 20 20">
+//                   <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+//                 </svg>
+//               </div>
+//             </div>
+//           </div>
+//         </Link>
+
+//         {/* <div className="grid grid-cols-2 gap-4">
+//           <Link href="/history" className="block">
+//             <div className="card hover:shadow-md transition-shadow">
+//               <div className="text-center">
+//                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+//                   <svg className="w-6 h-6 text-emerald-800" fill="currentColor" viewBox="0 0 20 20">
+//                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+//                     <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+//                   </svg>
+//                 </div>
+//                 <h3 className="font-medium text-gray-900">История</h3>
+//                 <p className="text-gray-600 text-sm mt-1">Просмотр отчетов</p>
+//               </div>
+//             </div>
+//           </Link>
+
+//           <Link href="/profile" className="block">
+//             <div className="card hover:shadow-md transition-shadow">
+//               <div className="text-center">
+//                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+//                   <svg className="w-6 h-6 text-emerald-800" fill="currentColor" viewBox="0 0 20 20">
+//                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+//                   </svg>
+//                 </div>
+//                 <h3 className="font-medium text-gray-900">Профиль</h3>
+//                 <p className="text-gray-600 text-sm mt-1">Настройки</p>
+//               </div>
+//             </div>
+//           </Link>
+//         </div> */}
+//       </div>
+//     </div>
+//   )
+// }
+
+
+
+// app/page.js
+'use client'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useTelegram } from './hooks/useTelegram' // Путь к вашему хуку
+
+export default function HomePage() {
+  const { user: telegramUser, isLoading, tg } = useTelegram()
+
+  const [stats, setStats] = useState({
+    totalReports: 12,
+    lastReport: '2024-06-08'
+  })
+
+  // Формируем отображаемое имя из данных Telegram
+  const getDisplayName = () => {
+    if (!telegramUser) return 'Пользователь'
+
+    const parts = []
+    if (telegramUser.first_name) parts.push(telegramUser.first_name)
+    if (telegramUser.last_name) parts.push(telegramUser.last_name)
+
+    return parts.length > 0 ? parts.join(' ') : (telegramUser.username || `User ${telegramUser.id}`)
+  }
+
+  // Формируем инициалы для аватара
+  const getInitials = () => {
+    if (!telegramUser) return 'U'
+
+    if (telegramUser.first_name && telegramUser.last_name) {
+      return `${telegramUser.first_name[0]}${telegramUser.last_name[0]}`
+    } else if (telegramUser.first_name) {
+      return telegramUser.first_name[0]
+    } else if (telegramUser.username) {
+      return telegramUser.username[0].toUpperCase()
+    }
+
+    return 'U'
+  }
+
+  // Показываем загрузку пока получаем данные
+  if (isLoading) {
+    return (
+      <div className="p-6 pb-24">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-800 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Загрузка...</p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+    )
+  }
+
+  // Показываем ошибку если не удалось получить данные пользователя
+  if (!telegramUser) {
+    return (
+      <div className="p-6 pb-24">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <p className="text-red-600 font-medium">Ошибка авторизации</p>
+            <p className="text-gray-600 text-sm mt-1">Пожалуйста, откройте приложение через Telegram</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-6 pb-24">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Привет, {getDisplayName()}!
+            </h1>
+            <p className="text-gray-600 mt-1">Добро пожаловать в Asman AI</p>
+            {telegramUser.username && (
+              <p className="text-gray-500 text-sm mt-1">@{telegramUser.username}</p>
+            )}
+          </div>
+          <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+            <span className="text-emerald-800 font-semibold text-lg">
+              {getInitials()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Debug info - можно убрать в продакшене */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-6 p-3 bg-gray-50 rounded-lg text-xs">
+          <details>
+            <summary className="cursor-pointer text-gray-600">Debug: Данные пользователя</summary>
+            <pre className="mt-2 text-gray-800">{JSON.stringify(telegramUser, null, 2)}</pre>
+          </details>
+        </div>
+      )}
+
+      {/* Stats - раскомментируйте когда будете использовать */}
+      {/* <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="card text-center">
+          <div className="text-3xl font-bold text-emerald-800 mb-2">
+            {stats.totalReports}
+          </div>
+          <div className="text-gray-600 text-sm">Всего отчетов</div>
+        </div>
+        <div className="card text-center">
+          <div className="text-sm font-semibold text-emerald-800 mb-2">
+            {new Date(stats.lastReport).toLocaleDateString('ru-RU')}
+          </div>
+          <div className="text-gray-600 text-sm">Последний отчет</div>
+        </div>
+      </div> */}
+
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Быстрые действия</h2>
+
+        <Link href="/create-report" className="block">
+          <div className="bg-gradient-to-r from-emerald-800 to-emerald-700 rounded-2xl p-6 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-lg mb-2">Создать отчет</h3>
+                <p className="text-emerald-100 text-sm">Загрузите файлы и создайте новый отчет</p>
+              </div>
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6" fill="#006045" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Дополнительные действия - раскомментируйте по необходимости */}
+        {/* <div className="grid grid-cols-2 gap-4">
+          <Link href="/history" className="block">
+            <div className="card hover:shadow-md transition-shadow">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-emerald-800" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-900">История</h3>
+                <p className="text-gray-600 text-sm mt-1">Просмотр отчетов</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/profile" className="block">
+            <div className="card hover:shadow-md transition-shadow">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-emerald-800" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-900">Профиль</h3>
+                <p className="text-gray-600 text-sm mt-1">Настройки</p>
+              </div>
+            </div>
+          </Link>
+        </div> */}
+      </div>
+
+      {/* Кнопка закрытия Web App - опционально */}
+      {tg && (
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <button
+            onClick={() => tg.close()}
+            className="w-full py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+          >
+            Закрыть приложение
+          </button>
+        </div>
+      )}
     </div>
-  );
+  )
 }
