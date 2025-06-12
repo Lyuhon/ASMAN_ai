@@ -102,9 +102,10 @@
 
 
 
-// app/page.js
+// app/page.tsx
 'use client'
-import { useState, useEffect } from 'react'
+// import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useTelegram } from './hooks/useTelegram' // Путь к вашему хуку
 
