@@ -936,10 +936,13 @@ export default function HistoryPage() {
             if (tg?.initData) {
                 headers['X-Telegram-Init-Data'] = tg.initData
                 console.log('🔐 Добавлены Telegram данные для аутентификации')
+                console.log('🔐 initData preview:', tg.initData.substring(0, 50) + '...')
             } else {
                 console.warn('⚠️ Telegram initData недоступны')
+                console.warn('⚠️ tg object:', tg)
             }
 
+            console.log('📤 Отправляем заголовки:', Object.keys(headers))
             console.log('⏱️ Время запроса:', new Date().toISOString())
 
             const response = await fetch(apiUrl, {
@@ -951,12 +954,11 @@ export default function HistoryPage() {
             console.log('  Status:', response.status)
             console.log('  StatusText:', response.statusText)
             console.log('  OK:', response.ok)
-
-            const result = await response.json()
-            console.log('📋 JSON ответ:', JSON.stringify(result, null, 2))
+            console.log('  Response headers:', Object.fromEntries(response.headers.entries()))
 
             if (response.status === 401) {
-                console.log('🔒 Ошибка аутентификации')
+                console.log('🔒 Ошибка аутентификации - проверяем initData')
+                console.log('🔒 Current initData:', tg?.initData)
                 setError('Необходима авторизация через Telegram')
                 return
             }
@@ -966,6 +968,9 @@ export default function HistoryPage() {
                 setError('Доступ запрещен')
                 return
             }
+
+            const result = await response.json()
+            console.log('📋 JSON ответ:', JSON.stringify(result, null, 2))
 
             if (result.success) {
                 console.log('✅ Отчеты успешно загружены')
@@ -1058,19 +1063,19 @@ export default function HistoryPage() {
             const downloadUrl = `https://asmanenergy.com/wp-json/qogi/v1/reports/${reportId}/download`
             console.log('🌐 URL скачивания:', downloadUrl)
 
-            // Добавляем параметры аутентификации
-            const authUrl = new URL(downloadUrl)
-            authUrl.searchParams.append('init_data', tg.initData)
-
-            console.log('🔐 URL с аутентификацией:', authUrl.toString())
+            console.log('🔐 Отправляем с initData:', tg.initData.substring(0, 50) + '...')
 
             // Используем безопасное скачивание с аутентификацией
-            const response = await fetch(authUrl.toString(), {
+            const response = await fetch(downloadUrl, {
                 method: 'GET',
                 headers: {
                     'X-Telegram-Init-Data': tg.initData
                 }
             })
+
+            console.log('📥 Ответ на скачивание:')
+            console.log('  Status:', response.status)
+            console.log('  StatusText:', response.statusText)
 
             if (response.status === 401) {
                 throw new Error('Необходима авторизация')
@@ -1086,6 +1091,7 @@ export default function HistoryPage() {
 
             // Получаем файл как blob
             const blob = await response.blob()
+            console.log('📁 Blob получен, размер:', blob.size)
 
             // Создаем ссылку для скачивания
             const link = document.createElement('a')
