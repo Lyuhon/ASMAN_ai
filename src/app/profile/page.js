@@ -836,7 +836,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Language Settings - УПРОЩЕННАЯ ВЕРСИЯ */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">{currentTexts.preferences}</h3>
                 <div className="bg-white rounded-xl border border-gray-200 p-4">
                     <div className="flex items-center justify-between mb-4">
@@ -862,10 +862,10 @@ export default function ProfilePage() {
                     </button>
                     <p className="text-xs text-gray-500 text-center mt-2">{currentTexts.changeLanguageDesc}</p>
                 </div>
-            </div>
+            </div> */}
 
             {/* Registration Status */}
-            <div className="mb-6 p-4 rounded-xl border">
+            {/* <div className="mb-6 p-4 rounded-xl border">
                 <div className={`flex items-center ${isRegistrationComplete() ? 'text-emerald-800 bg-emerald-50 border-emerald-200' : 'text-amber-800 bg-amber-50 border-amber-200'}`}>
                     <div className={`w-3 h-3 rounded-full mr-3 ${isRegistrationComplete() ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
                     <div>
@@ -873,7 +873,7 @@ export default function ProfilePage() {
                         <p className="text-sm">{isRegistrationComplete() ? currentTexts.completed : currentTexts.incomplete}</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Personal Information */}
             <div className="space-y-6">
@@ -914,7 +914,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Info Message */}
-            <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            {/* <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
                 <div className="flex items-start">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
                         <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -923,7 +923,7 @@ export default function ProfilePage() {
                     </div>
                     <p className="text-blue-800 text-sm">{currentTexts.editInTelegram}</p>
                 </div>
-            </div>
+            </div> */}
 
             {/* Close App Button */}
             {isRegistrationComplete() && (

@@ -475,7 +475,7 @@ export default function HomePage() {
                 <h3 className="font-semibold text-lg mb-2">{currentTexts.createReport}</h3>
                 <p className="text-emerald-100 text-sm">{currentTexts.createReportDesc}</p>
               </div>
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="w-12 max-h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center ml-2">
                 <svg className="w-6 h-6" fill="#006045" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                 </svg>
