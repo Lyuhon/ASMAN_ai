@@ -2322,6 +2322,54 @@ export default function HistoryPage() {
         }
     }
 
+    // Альтернативный метод скачивания для обхода CORS
+    const downloadReportDirect = async (reportId) => {
+        console.log('📥 Прямое скачивание отчета:', reportId)
+
+        if (!user || !tg?.initData) {
+            console.error('❌ Пользователь не авторизован')
+            showNotification('Ошибка авторизации', 'error')
+            return
+        }
+
+        try {
+            // Создаем URL с параметрами аутентификации
+            const downloadUrl = `https://asmanenergy.com/wp-json/qogi/v1/reports/${reportId}/download`
+
+            // Формируем URL с init_data как параметр (обход CORS)
+            const urlWithAuth = `${downloadUrl}?init_data=${encodeURIComponent(tg.initData)}`
+
+            console.log('🌐 URL для прямого скачивания:', urlWithAuth)
+
+            // Открываем в новом окне для скачивания
+            const downloadWindow = window.open(urlWithAuth, '_blank')
+
+            // Закрываем окно через небольшой промежуток времени
+            setTimeout(() => {
+                if (downloadWindow) {
+                    downloadWindow.close()
+                }
+            }, 3000)
+
+            console.log('✅ Скачивание инициировано')
+            showNotification('📁 Скачивание началось', 'success')
+
+            // Вибрация для подтверждения
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success')
+            }
+
+        } catch (error) {
+            console.error('💥 Ошибка при прямом скачивании:', error)
+            showNotification(`❌ Ошибка скачивания: ${error.message}`, 'error')
+
+            // Вибрация для ошибки
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('error')
+            }
+        }
+    }
+
     const shareReport = async (reportId) => {
         console.log('📤 Попытка поделиться отчетом:', reportId)
 
@@ -2423,8 +2471,8 @@ export default function HistoryPage() {
             {/* Уведомления */}
             {notification && (
                 <div className={`fixed top-4 left-4 right-4 z-50 p-4 rounded-xl shadow-lg transition-all duration-300 ${notification.type === 'success'
-                        ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                        : 'bg-red-50 border border-red-200 text-red-800'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                    : 'bg-red-50 border border-red-200 text-red-800'
                     }`}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -2543,8 +2591,8 @@ export default function HistoryPage() {
                                         onClick={() => sendReportToTelegram(report.id)}
                                         disabled={sendingReports.has(report.id)}
                                         className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${sendingReports.has(report.id)
-                                                ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                                                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800'
+                                            ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800'
                                             }`}
                                     >
                                         {sendingReports.has(report.id) ? (
@@ -2566,7 +2614,7 @@ export default function HistoryPage() {
                                     <div className="flex gap-2">
                                         {/* Кнопка скачивания (как fallback) */}
                                         <button
-                                            onClick={() => downloadReport(report.id)}
+                                            onClick={() => downloadReportDirect(report.id)}
                                             className="w-10 h-10 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center transition-colors"
                                             title="Скачать файл"
                                         >
