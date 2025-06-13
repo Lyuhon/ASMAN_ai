@@ -853,7 +853,7 @@ export default function CreateReportPage() {
                             <button
                                 key={type.id}
                                 onClick={() => selectType(type.id)}
-                                className="w-full card hover:shadow-md transition-shadow text-left"
+                                className="w-full card transition-shadow text-left"
                             >
                                 <div className="flex items-center">
                                     <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mr-4">

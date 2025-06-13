@@ -33,8 +33,7 @@ export default function Navigation() {
             label: 'История',
             icon: (
                 <svg className="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 4h8a1 1 0 110 2H6a1 1 0 110-2zm0 4h8a1 1 0 110 2H6a1 1 0 110-2z" />
                 </svg>
             )
         },
@@ -51,7 +50,7 @@ export default function Navigation() {
 
     return (
         <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 shadow-lg">
-            <div className="grid grid-cols-4 py-2">
+            <div className="grid grid-cols-4 py-0">
                 {navItems.map((item) => {
                     const active = item.isActive ? item.isActive(pathname) : isActive(item.href)
 
@@ -60,15 +59,12 @@ export default function Navigation() {
                             key={item.href}
                             href={item.href}
                             className={`flex flex-col items-center py-3 px-2 transition-colors duration-200 ${active
-                                    ? 'text-emerald-800'
-                                    : 'text-gray-400 hover:text-gray-600'
+                                ? 'text-emerald-800'
+                                : 'text-gray-400 hover:text-gray-600'
                                 }`}
                         >
                             {item.icon}
                             <span className="text-xs font-medium">{item.label}</span>
-                            {active && (
-                                <div className="w-1 h-1 bg-emerald-800 rounded-full mt-1"></div>
-                            )}
                         </Link>
                     )
                 })}

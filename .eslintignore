@@ -1,0 +1,16 @@
+# .eslintignore
+
+# Игнорировать конкретные файлы
+src/app/create-report/page.js
+src/app/history/page.js
+src/app/page.tsx
+
+# Игнорировать папки
+node_modules/
+.next/
+out/
+dist/
+
+# Игнорировать файлы по паттерну
+*.config.js
+*.config.ts
