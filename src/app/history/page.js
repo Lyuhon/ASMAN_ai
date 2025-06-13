@@ -1401,6 +1401,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTelegramContext } from '../contexts/TelegramContext'
+import './history.css'
 
 export default function HistoryPage() {
     const { user, tg, isLoading: userLoading } = useTelegramContext()
@@ -1779,8 +1780,8 @@ export default function HistoryPage() {
             {/* Уведомления */}
             {notification && (
                 <div className={`fixed top-4 left-4 right-4 z-50 p-4 rounded-xl shadow-lg transition-all duration-300 ${notification.type === 'success'
-                        ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                        : 'bg-red-50 border border-red-200 text-red-800'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                    : 'bg-red-50 border border-red-200 text-red-800'
                     }`}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -1899,8 +1900,8 @@ export default function HistoryPage() {
                                         onClick={() => sendReportToTelegram(report.id)}
                                         disabled={sendingReports.has(report.id)}
                                         className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${sendingReports.has(report.id)
-                                                ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                                                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800'
+                                            ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800'
                                             }`}
                                     >
                                         {sendingReports.has(report.id) ? (
