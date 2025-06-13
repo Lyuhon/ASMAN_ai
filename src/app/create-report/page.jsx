@@ -358,7 +358,7 @@ export default function CreateReportPage() {
             </div>
 
             {/* User Info */}
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
+            {/* <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-emerald-800 rounded-full flex items-center justify-center text-white font-semibold">
                         {user.first_name?.[0] || 'U'}
@@ -372,7 +372,7 @@ export default function CreateReportPage() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Type Selection */}
             {currentStep === 0 && (
@@ -556,7 +556,7 @@ export default function CreateReportPage() {
                         {currentStep === 6 && (
                             <div className="text-center">
                                 {isGenerating ? (
-                                    <div className="py-8">
+                                    <div className="py-4">
                                         <div className="w-16 h-16 border-4 border-emerald-200 border-t-emerald-800 rounded-full animate-spin mx-auto mb-4"></div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                             Генерация отчета...
@@ -566,7 +566,7 @@ export default function CreateReportPage() {
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="py-8">
+                                    <div className="py-4">
                                         <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <svg className="w-8 h-8 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -576,7 +576,7 @@ export default function CreateReportPage() {
                                             Готово к генерации
                                         </h3>
                                         <p className="text-gray-600 mb-6">
-                                            Все данные загружены, отчет будет создан
+                                            Все данные загружены, подтвердите создание отчета
                                         </p>
                                         <div className="bg-gray-50 rounded-xl p-4 text-left">
                                             <div className="space-y-2 text-sm">
@@ -729,7 +729,7 @@ function FileUploadArea({ type, accept, onFileSelect, selectedFile, optional = f
     }
 
     return (
-        <div className="border-2 border-dashed border-emerald-300 rounded-xl p-8 text-center hover:border-emerald-400 transition-colors">
+        <div className="border-2 border-dashed border-[#006045] rounded-xl p-8 text-center hover:border-emerald-400 transition-colors">
             <input
                 type="file"
                 accept={accept}
