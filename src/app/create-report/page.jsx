@@ -2,7 +2,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { useTelegramContext } from '../../contexts/TelegramContext'
+import { useTelegramContext } from '../contexts/TelegramContext'
 
 export default function CreateReportPage() {
     const { user, tg, isLoading: userLoading } = useTelegramContext()
