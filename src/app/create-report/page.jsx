@@ -1,10 +1,12 @@
 // // Исправленный app/create-report/page.js
 // 'use client'
 // import { useState } from 'react'
+// import { useRouter } from 'next/navigation'
 // import Link from 'next/link'
 // import { useTelegramContext } from '../contexts/TelegramContext'
 
 // export default function CreateReportPage() {
+//     const router = useRouter()
 //     const { user, tg, isLoading: userLoading } = useTelegramContext()
 //     const [currentStep, setCurrentStep] = useState(0)
 //     const [selectedType, setSelectedType] = useState(null)
@@ -236,40 +238,7 @@
 
 //                 alert(`Отчет ${selectedType.toUpperCase()} успешно создан! ID: ${result.report_id}`)
 
-//                 // Безопасное скачивание с аутентификацией
-//                 if (result.download_url) {
-//                     console.log('📥 Начинаем безопасное скачивание файла')
-//                     try {
-//                         // Добавляем init_data к URL скачивания
-//                         const downloadUrl = new URL(result.download_url)
-//                         downloadUrl.searchParams.append('init_data', tg.initData)
-
-//                         console.log('🔐 URL с аутентификацией:', downloadUrl.toString().substring(0, 100) + '...')
-
-//                         // Скачиваем с аутентификацией
-//                         const downloadResponse = await fetch(downloadUrl.toString())
-
-//                         if (downloadResponse.ok) {
-//                             const blob = await downloadResponse.blob()
-//                             const link = document.createElement('a')
-//                             link.href = URL.createObjectURL(blob)
-//                             link.download = `${selectedType}_report_${result.report_id}.pdf`
-//                             document.body.appendChild(link)
-//                             link.click()
-//                             document.body.removeChild(link)
-//                             URL.revokeObjectURL(link.href)
-//                             console.log('✅ Скачивание файла завершено')
-//                         } else {
-//                             console.error('❌ Ошибка скачивания:', downloadResponse.status)
-//                             alert('Ошибка при скачивании файла')
-//                         }
-//                     } catch (downloadError) {
-//                         console.error('❌ Ошибка при скачивании:', downloadError)
-//                         alert('Ошибка при скачивании файла')
-//                     }
-//                 }
-
-//                 // Сброс формы
+//                 // Сброс формы ПЕРЕД редиректом
 //                 console.log('🔄 Сбрасываем форму')
 //                 setFormData({
 //                     image: null,
@@ -281,6 +250,10 @@
 //                 })
 //                 setCurrentStep(0)
 //                 setSelectedType(null)
+
+//                 // Редирект на страницу истории
+//                 console.log('🔄 Перенаправляем на страницу истории')
+//                 router.push('/history')
 //             } else {
 //                 console.log('❌ Ошибка от API:', result)
 //                 alert(`Ошибка создания отчета: ${result.message || 'Неизвестная ошибка'}`)
@@ -770,6 +743,12 @@
 
 
 
+
+
+
+
+
+
 // Исправленный app/create-report/page.js
 'use client'
 import { useState } from 'react'
@@ -783,10 +762,18 @@ export default function CreateReportPage() {
     const [currentStep, setCurrentStep] = useState(0)
     const [selectedType, setSelectedType] = useState(null)
     const [formData, setFormData] = useState({
+        // Для QOGI (как было)
         image: null,
         video1: null,
         video2: null,
         data_file: null,
+
+        // Для EYECSITE (новые поля)
+        video: null,      // одно видео вместо video1/video2
+        docx: null,       // документ Word
+        xlsx: null,       // дополнительная таблица Excel
+
+        // Общие настройки
         language: 'ru',
         cubic_metr: false
     })
@@ -815,14 +802,29 @@ export default function CreateReportPage() {
         }
     ]
 
-    const steps = [
-        { id: 1, title: 'Изображение OPGAL', desc: 'Загрузите изображение (до 5 МБ)' },
-        { id: 2, title: 'Видео файл', desc: 'Загрузите первый .ts файл (до 100 МБ)' },
-        { id: 3, title: 'Enhanced видео', desc: 'Загрузите второй .ts файл (до 100 МБ)' },
-        { id: 4, title: 'Загрузка данных', desc: 'Выберите файл данных' },
-        { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
-        { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
-    ]
+    const getStepsForType = (type) => {
+        if (type === 'qogi') {
+            return [
+                { id: 1, title: 'Изображение OPGAL', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
+                { id: 2, title: 'Первое видео', desc: 'Загрузите первый .ts файл (до 100 МБ)', field: 'video1', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
+                { id: 3, title: 'Второе видео', desc: 'Загрузите второй .ts файл (до 100 МБ)', field: 'video2', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
+                { id: 4, title: 'Данные CSV', desc: 'Выберите CSV файл с данными', field: 'data_file', fileType: 'data', accept: '.csv', maxSize: '10 МБ', optional: false },
+                { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
+                { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
+            ]
+        } else if (type === 'eyecsite') {
+            return [
+                { id: 1, title: 'Изображение', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
+                { id: 2, title: 'Видео файл', desc: 'Загрузите .ts видео файл (до 100 МБ)', field: 'video', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
+                { id: 3, title: 'Документ Word', desc: 'Загрузите .docx файл (до 20 МБ)', field: 'docx', fileType: 'docx', accept: '.docx', maxSize: '20 МБ', optional: true },
+                { id: 4, title: 'Дополнительная таблица', desc: 'Загрузите дополнительный .xlsx файл (до 50 МБ)', field: 'xlsx', fileType: 'xlsx', accept: '.xlsx', maxSize: '50 МБ', optional: true },
+                { id: 5, title: 'Основные данные', desc: 'Выберите основной XLSX файл с данными', field: 'data_file', fileType: 'data', accept: '.xlsx', maxSize: '50 МБ', optional: false },
+                { id: 6, title: 'Настройки отчета', desc: 'Язык и параметры' },
+                { id: 7, title: 'Генерация отчета', desc: 'Создание PDF' }
+            ]
+        }
+        return []
+    }
 
     const languages = [
         { code: 'ru', name: 'Русский' },
@@ -853,8 +855,10 @@ export default function CreateReportPage() {
     }
 
     const validateFile = (file, type) => {
-        const maxImageSize = 5 * 1024 * 1024 // 5 MB
-        const maxVideoSize = 100 * 1024 * 1024 // 100 MB
+        const maxImageSize = 5 * 1024 * 1024      // 5 MB
+        const maxVideoSize = 100 * 1024 * 1024    // 100 MB  
+        const maxDocxSize = 20 * 1024 * 1024      // 20 MB
+        const maxXlsxSize = 50 * 1024 * 1024      // 50 MB
 
         switch (type) {
             case 'image':
@@ -867,6 +871,7 @@ export default function CreateReportPage() {
                     return false
                 }
                 break
+
             case 'video':
                 if (!file.name.toLowerCase().endsWith('.ts')) {
                     alert('Видео файл должен быть в формате .ts')
@@ -877,6 +882,29 @@ export default function CreateReportPage() {
                     return false
                 }
                 break
+
+            case 'docx':
+                if (!file.name.toLowerCase().endsWith('.docx')) {
+                    alert('Документ должен быть в формате .docx')
+                    return false
+                }
+                if (file.size > maxDocxSize) {
+                    alert('Размер документа не должен превышать 20 МБ')
+                    return false
+                }
+                break
+
+            case 'xlsx':
+                if (!file.name.toLowerCase().endsWith('.xlsx')) {
+                    alert('Файл должен быть в формате .xlsx')
+                    return false
+                }
+                if (file.size > maxXlsxSize) {
+                    alert('Размер файла не должен превышать 50 МБ')
+                    return false
+                }
+                break
+
             case 'data':
                 const isQogi = selectedType === 'qogi'
                 const isEyecsite = selectedType === 'eyecsite'
@@ -886,7 +914,7 @@ export default function CreateReportPage() {
                     return false
                 }
                 if (isEyecsite && !file.name.toLowerCase().endsWith('.xlsx')) {
-                    alert('Для EYECSITE отчетов необходимо файл XLSX')
+                    alert('Для EYECSITE отчетов необходим XLSX файл')
                     return false
                 }
                 break
@@ -931,29 +959,43 @@ export default function CreateReportPage() {
             formDataToSend.append('data_file', formData.data_file)
             formDataToSend.append('language', formData.language)
             formDataToSend.append('cubic_metr', formData.cubic_metr.toString())
-
-            // ВАЖНО: Автоматически передаем telegram_user_id из контекста
             formDataToSend.append('telegram_user_id', user.id.toString())
-
-            // ВАЖНО: Добавляем init_data для аутентификации
             formDataToSend.append('init_data', tg.initData)
 
-            // Добавляем медиафайлы если они есть
-            if (formData.image) {
-                formDataToSend.append('image', formData.image)
-            }
-            if (formData.video1) {
-                formDataToSend.append('video1', formData.video1)
-            }
-            if (formData.video2) {
-                formDataToSend.append('video2', formData.video2)
+            // Добавляем файлы в зависимости от типа отчета
+            if (selectedType === 'qogi') {
+                // Для QOGI - старая логика
+                if (formData.image) {
+                    formDataToSend.append('image', formData.image)
+                }
+                if (formData.video1) {
+                    formDataToSend.append('video1', formData.video1)
+                }
+                if (formData.video2) {
+                    formDataToSend.append('video2', formData.video2)
+                }
+            } else if (selectedType === 'eyecsite') {
+                // Для EYECSITE - новая логика
+                if (formData.image) {
+                    formDataToSend.append('image', formData.image)
+                }
+                if (formData.video) {
+                    formDataToSend.append('video', formData.video)
+                }
+                if (formData.docx) {
+                    formDataToSend.append('docx', formData.docx)
+                }
+                if (formData.xlsx) {
+                    formDataToSend.append('xlsx', formData.xlsx)
+                }
             }
 
-            console.log('📤 Отправляем FormData с аутентификацией:')
+            // Логирование для отладки
+            console.log('📤 Отправляем FormData для', selectedType.toUpperCase(), ':')
             for (let [key, value] of formDataToSend.entries()) {
                 if (key === 'init_data') {
                     console.log(`  ${key}:`, value.substring(0, 50) + '...')
-                } else if (key === 'data_file' || key === 'image' || key === 'video1' || key === 'video2') {
+                } else if (value instanceof File) {
                     console.log(`  ${key}:`, {
                         name: value.name,
                         size: value.size,
@@ -1067,20 +1109,43 @@ export default function CreateReportPage() {
     }
 
     const canProceedToNextStep = () => {
-        switch (currentStep) {
-            case 1: // Изображение - опционально
-                return true
-            case 2: // Видео 1 - опционально  
-                return true
-            case 3: // Видео 2 - опционально
-                return true
-            case 4: // Файл данных - обязательно
-                return !!formData.data_file
-            case 5: // Настройки - всегда можно пройти
-                return true
-            default:
-                return true
+        if (currentStep >= totalSteps) return false
+
+        const currentStepData = steps[currentStep - 1]
+
+        // Если это шаг загрузки файла
+        if (currentStepData?.field) {
+            const fieldName = currentStepData.field
+            const isOptional = currentStepData.optional
+
+            // Если поле обязательное, проверяем что файл загружен
+            if (!isOptional && !formData[fieldName]) {
+                return false
+            }
         }
+
+        return true
+    }
+
+    // Кнопки навигации
+    {
+        currentStep < totalSteps ? (
+            <button
+                onClick={nextStep}
+                className="btn-primary flex-1"
+                disabled={!canProceedToNextStep() || isGenerating}
+            >
+                {steps[currentStep - 1]?.optional ? 'Пропустить' : 'Далее'}
+            </button>
+        ) : (
+            <button
+                onClick={generateReport}
+                className="btn-primary flex-1"
+                disabled={isGenerating}
+            >
+                {isGenerating ? 'Генерируется...' : 'Создать отчет'}
+            </button>
+        )
     }
 
     return (
@@ -1168,18 +1233,22 @@ export default function CreateReportPage() {
                     {/* Progress Bar */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-emerald-800">Шаг {currentStep} из 6</span>
+                            <span className="text-sm font-medium text-emerald-800">
+                                Шаг {currentStep} из {totalSteps}
+                            </span>
                             <div className="flex items-center gap-2">
                                 <span className="text-xs text-gray-600">
                                     {reportTypes.find(t => t.id === selectedType)?.title}
                                 </span>
-                                <span className="text-sm text-gray-600">{Math.round((currentStep / 6) * 100)}%</span>
+                                <span className="text-sm text-gray-600">
+                                    {Math.round((currentStep / totalSteps) * 100)}%
+                                </span>
                             </div>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                                 className="bg-emerald-800 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(currentStep / 6) * 100}%` }}
+                                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
                             ></div>
                         </div>
                     </div>
@@ -1191,73 +1260,34 @@ export default function CreateReportPage() {
                         </h2>
                         <p className="text-gray-600 mb-6">{steps[currentStep - 1].desc}</p>
 
-                        {/* Step 1: Image Upload */}
-                        {currentStep === 1 && (
-                            <FileUploadArea
-                                type="image"
-                                accept="image/*"
-                                maxSize="5 МБ"
-                                onFileSelect={(file) => {
-                                    if (validateFile(file, 'image')) {
-                                        handleFileUpload('image', file)
-                                    }
-                                }}
-                                selectedFile={formData.image}
-                                optional={true}
-                            />
-                        )}
+                        {/* Динамические шаги загрузки файлов */}
+                        {currentStep > 0 && currentStep <= totalSteps - 2 && (() => {
+                            const step = steps[currentStep - 1]
 
-                        {/* Step 2: Video 1 Upload */}
-                        {currentStep === 2 && (
-                            <FileUploadArea
-                                type="video"
-                                accept=".ts"
-                                maxSize="100 МБ"
-                                onFileSelect={(file) => {
-                                    if (validateFile(file, 'video')) {
-                                        handleFileUpload('video1', file)
-                                    }
-                                }}
-                                selectedFile={formData.video1}
-                                optional={true}
-                            />
-                        )}
+                            // Если это шаг загрузки файла
+                            if (step.field) {
+                                return (
+                                    <FileUploadArea
+                                        type={step.fileType}
+                                        accept={step.accept}
+                                        maxSize={step.maxSize}
+                                        title={step.title}
+                                        onFileSelect={(file) => {
+                                            if (validateFile(file, step.fileType)) {
+                                                handleFileUpload(step.field, file)
+                                            }
+                                        }}
+                                        selectedFile={formData[step.field]}
+                                        optional={step.optional}
+                                        dataType={selectedType}
+                                    />
+                                )
+                            }
+                            return null
+                        })()}
 
-                        {/* Step 3: Video 2 Upload */}
-                        {currentStep === 3 && (
-                            <FileUploadArea
-                                type="video"
-                                accept=".ts"
-                                maxSize="100 МБ"
-                                title="Enhanced видео"
-                                onFileSelect={(file) => {
-                                    if (validateFile(file, 'video')) {
-                                        handleFileUpload('video2', file)
-                                    }
-                                }}
-                                selectedFile={formData.video2}
-                                optional={true}
-                            />
-                        )}
-
-                        {/* Step 4: Data File Upload */}
-                        {currentStep === 4 && (
-                            <FileUploadArea
-                                type="data"
-                                accept={selectedType === 'qogi' ? '.csv' : '.xlsx'}
-                                onFileSelect={(file) => {
-                                    if (validateFile(file, 'data')) {
-                                        handleFileUpload('data_file', file)
-                                    }
-                                }}
-                                selectedFile={formData.data_file}
-                                dataType={selectedType}
-                                optional={false}
-                            />
-                        )}
-
-                        {/* Step 5: Settings - УБИРАЕМ поле telegram_user_id */}
-                        {currentStep === 5 && (
+                        {/* Шаг настроек - предпоследний */}
+                        {currentStep === totalSteps - 1 && (
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -1292,13 +1322,11 @@ export default function CreateReportPage() {
                                         </span>
                                     </label>
                                 </div>
-
-                                {/* УБРАЛИ поле telegram_user_id - оно берется автоматически */}
                             </div>
                         )}
 
-                        {/* Step 6: Generation */}
-                        {currentStep === 6 && (
+                        {/* Шаг генерации - последний */}
+                        {currentStep === totalSteps && (
                             <div className="text-center">
                                 {isGenerating ? (
                                     <div className="py-4">
@@ -1347,7 +1375,25 @@ export default function CreateReportPage() {
                                                 )}
                                                 {formData.video2 && (
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Enhanced видео:</span>
+                                                        <span className="text-gray-600">Видео 2:</span>
+                                                        <span className="font-medium">✓ Загружено</span>
+                                                    </div>
+                                                )}
+                                                {formData.video && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Видео:</span>
+                                                        <span className="font-medium">✓ Загружено</span>
+                                                    </div>
+                                                )}
+                                                {formData.docx && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Документ:</span>
+                                                        <span className="font-medium">✓ Загружено</span>
+                                                    </div>
+                                                )}
+                                                {formData.xlsx && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Доп. таблица:</span>
                                                         <span className="font-medium">✓ Загружено</span>
                                                     </div>
                                                 )}
@@ -1406,6 +1452,7 @@ export default function CreateReportPage() {
 }
 
 function FileUploadArea({ type, accept, onFileSelect, selectedFile, optional = false, maxSize, title, dataType }) {
+    // Добавить новые типы в getIcon()
     const getIcon = () => {
         switch (type) {
             case 'image':
@@ -1418,6 +1465,18 @@ function FileUploadArea({ type, accept, onFileSelect, selectedFile, optional = f
                 return (
                     <svg className="w-12 h-12 text-emerald-600 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                )
+            case 'docx':
+                return (
+                    <svg className="w-12 h-12 text-emerald-600 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                )
+            case 'xlsx':
+                return (
+                    <svg className="w-12 h-12 text-emerald-600 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                 )
             case 'data':
@@ -1460,12 +1519,17 @@ function FileUploadArea({ type, accept, onFileSelect, selectedFile, optional = f
         return desc
     }
 
+    // Обновить getFileFormat()
     const getFileFormat = () => {
         switch (type) {
             case 'image':
                 return 'JPG, PNG, GIF'
             case 'video':
                 return 'Только .ts файлы'
+            case 'docx':
+                return 'Только .docx файлы'
+            case 'xlsx':
+                return 'Только .xlsx файлы'
             case 'data':
                 return dataType === 'qogi' ? 'CSV файлы' : 'XLSX файлы'
             default:
