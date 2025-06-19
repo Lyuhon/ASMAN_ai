@@ -3034,7 +3034,7 @@ export default function CreateReportPage() {
                     </div>
 
                     {/* Step Content */}
-                    <div className="mb-8">
+                    <div className="mb-4">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
                             {steps[currentStep - 1]?.title}
                         </h2>
@@ -3146,9 +3146,9 @@ export default function CreateReportPage() {
                                             </svg>
                                         </div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                            Готово к генерации
+                                            Готово к генерации<br /> подтвердите создание
                                         </h3>
-                                        <p className="text-gray-600 mb-6">
+                                        <p className="hidden text-gray-600 mb-6-">
                                             Все данные загружены, подтвердите создание отчета
                                         </p>
                                         <div className="bg-gray-50 rounded-xl p-4 text-left">
@@ -3241,8 +3241,8 @@ export default function CreateReportPage() {
                             <button
                                 onClick={generateReport}
                                 className={`flex-1 py-3 px-4 rounded-xl font-medium text-white transition-all duration-200 ${isGenerating
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-lg hover:shadow-xl'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-lg hover:shadow-xl'
                                     }`}
                                 disabled={isGenerating}
                             >

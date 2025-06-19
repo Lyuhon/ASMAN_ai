@@ -474,7 +474,7 @@ export function TelegramProvider({ children }) {
                     username: testUser.username,
                     first_name: testUser.first_name,
                     last_name: testUser.last_name,
-                    language: 'ru',
+                    language: 'en',
                     company_name: 'Test Company',
                     phone_number: '+998901234567',
                     registration_completed: true

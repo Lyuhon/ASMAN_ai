@@ -459,7 +459,7 @@ export default function HomePage() {
         <DashboardStats
           user={telegramUser}
           tg={tg}
-          language={getUserLanguage()}
+        // language={getUserLanguage()}
         />
       )}
 

@@ -481,7 +481,7 @@ export const useTelegram = () => {
                     username: 'test_user',
                     first_name: 'Test',
                     last_name: 'User',
-                    language: 'ru',
+                    language: 'en',
                     company_name: 'Test Company',
                     phone_number: '+998901234567',
                     registration_completed: true
