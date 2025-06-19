@@ -826,6 +826,10 @@ export default function CreateReportPage() {
         return []
     }
 
+    // ВАЖНО: Определяем steps и totalSteps ЗДЕСЬ
+    const steps = selectedType ? getStepsForType(selectedType) : []
+    const totalSteps = steps.length
+
     const languages = [
         { code: 'ru', name: 'Русский' },
         { code: 'en', name: 'English' },
@@ -838,7 +842,7 @@ export default function CreateReportPage() {
     }
 
     const nextStep = () => {
-        if (currentStep < 6) setCurrentStep(currentStep + 1)
+        if (currentStep < totalSteps) setCurrentStep(currentStep + 1)
     }
 
     const prevStep = () => {
@@ -947,6 +951,9 @@ export default function CreateReportPage() {
             imageFileName: formData.image?.name,
             video1FileName: formData.video1?.name,
             video2FileName: formData.video2?.name,
+            videoFileName: formData.video?.name,
+            docxFileName: formData.docx?.name,
+            xlsxFileName: formData.xlsx?.name,
             dataFileName: formData.data_file?.name,
             dataFileSize: formData.data_file?.size,
             dataFileType: formData.data_file?.type
@@ -1058,6 +1065,9 @@ export default function CreateReportPage() {
                     image: null,
                     video1: null,
                     video2: null,
+                    video: null,
+                    docx: null,
+                    xlsx: null,
                     data_file: null,
                     language: 'ru',
                     cubic_metr: false
@@ -1127,27 +1137,6 @@ export default function CreateReportPage() {
         return true
     }
 
-    // Кнопки навигации
-    {
-        currentStep < totalSteps ? (
-            <button
-                onClick={nextStep}
-                className="btn-primary flex-1"
-                disabled={!canProceedToNextStep() || isGenerating}
-            >
-                {steps[currentStep - 1]?.optional ? 'Пропустить' : 'Далее'}
-            </button>
-        ) : (
-            <button
-                onClick={generateReport}
-                className="btn-primary flex-1"
-                disabled={isGenerating}
-            >
-                {isGenerating ? 'Генерируется...' : 'Создать отчет'}
-            </button>
-        )
-    }
-
     return (
         <div className="p-6 pb-24">
             {/* Header */}
@@ -1166,23 +1155,6 @@ export default function CreateReportPage() {
                 </h1>
                 <div className="w-10"></div>
             </div>
-
-            {/* User Info */}
-            {/* <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-800 rounded-full flex items-center justify-center text-white font-semibold">
-                        {user.first_name?.[0] || 'U'}
-                    </div>
-                    <div>
-                        <div className="font-medium text-emerald-900">
-                            {user.first_name} {user.last_name}
-                        </div>
-                        <div className="text-sm text-emerald-700">
-                            ID: {user.id}
-                        </div>
-                    </div>
-                </div>
-            </div> */}
 
             {/* Type Selection */}
             {currentStep === 0 && (
@@ -1256,16 +1228,16 @@ export default function CreateReportPage() {
                     {/* Step Content */}
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                            {steps[currentStep - 1].title}
+                            {steps[currentStep - 1]?.title}
                         </h2>
-                        <p className="text-gray-600 mb-6">{steps[currentStep - 1].desc}</p>
+                        <p className="text-gray-600 mb-6">{steps[currentStep - 1]?.desc}</p>
 
                         {/* Динамические шаги загрузки файлов */}
                         {currentStep > 0 && currentStep <= totalSteps - 2 && (() => {
                             const step = steps[currentStep - 1]
 
                             // Если это шаг загрузки файла
-                            if (step.field) {
+                            if (step?.field) {
                                 return (
                                     <FileUploadArea
                                         type={step.fileType}
@@ -1355,7 +1327,7 @@ export default function CreateReportPage() {
                                             <div className="space-y-2 text-sm">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Тип отчета:</span>
-                                                    <span className="font-medium">{selectedType.toUpperCase()}</span>
+                                                    <span className="font-medium">{selectedType?.toUpperCase()}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Файл данных:</span>
@@ -1417,7 +1389,7 @@ export default function CreateReportPage() {
 
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
-                        {currentStep < 6 && (
+                        {currentStep < totalSteps && (
                             <button
                                 onClick={prevStep}
                                 className="btn-secondary flex-1"
@@ -1427,13 +1399,13 @@ export default function CreateReportPage() {
                             </button>
                         )}
 
-                        {currentStep < 6 ? (
+                        {currentStep < totalSteps ? (
                             <button
                                 onClick={nextStep}
                                 className="btn-primary flex-1"
                                 disabled={!canProceedToNextStep() || isGenerating}
                             >
-                                {currentStep <= 3 ? 'Пропустить' : 'Далее'}
+                                {steps[currentStep - 1]?.optional ? 'Пропустить' : 'Далее'}
                             </button>
                         ) : (
                             <button
@@ -1502,6 +1474,10 @@ function FileUploadArea({ type, accept, onFileSelect, selectedFile, optional = f
                 return 'Выберите изображение OPGAL'
             case 'video':
                 return 'Выберите .ts видео файл'
+            case 'docx':
+                return 'Выберите .docx документ'
+            case 'xlsx':
+                return 'Выберите .xlsx файл'
             case 'data':
                 return dataType === 'qogi' ? 'Выберите CSV файл' : 'Выберите XLSX файл'
             default:
