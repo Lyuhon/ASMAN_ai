@@ -15,6 +15,7 @@ export default function ReportFilesPage() {
     const [error, setError] = useState(null)
     const [downloadingFiles, setDownloadingFiles] = useState(new Set())
     const [notification, setNotification] = useState(null)
+    const [downloadProgress, setDownloadProgress] = useState({})
 
     // Показать уведомление
     const showNotification = (message, type = 'success') => {
@@ -107,20 +108,53 @@ export default function ReportFilesPage() {
 
         try {
             setDownloadingFiles(prev => new Set([...prev, file.type]))
+            setDownloadProgress(prev => ({ ...prev, [file.type]: 0 }))
 
-            const response = await fetch(file.download_url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': tg.initData
-                }
-            })
+            // Используем XMLHttpRequest для отслеживания прогресса
+            const downloadWithProgress = () => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
 
-            if (!response.ok) {
-                throw new Error(`Ошибка скачивания: ${response.status}`)
+                    // Отслеживание прогресса скачивания
+                    xhr.addEventListener('progress', (event) => {
+                        if (event.lengthComputable) {
+                            const percentComplete = Math.round((event.loaded / event.total) * 100)
+                            console.log(`📊 Прогресс скачивания ${file.filename}: ${percentComplete}%`)
+                            setDownloadProgress(prev => ({
+                                ...prev,
+                                [file.type]: percentComplete
+                            }))
+                        }
+                    })
+
+                    xhr.addEventListener('load', () => {
+                        if (xhr.status === 200) {
+                            resolve(xhr.response)
+                        } else {
+                            reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText}`))
+                        }
+                    })
+
+                    xhr.addEventListener('error', () => {
+                        reject(new Error('Ошибка сети при скачивании'))
+                    })
+
+                    xhr.addEventListener('abort', () => {
+                        reject(new Error('Скачивание отменено'))
+                    })
+
+                    // Настройка запроса
+                    xhr.open('GET', file.download_url, true)
+                    xhr.responseType = 'blob'
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                    xhr.setRequestHeader('X-Telegram-Init-Data', tg.initData)
+
+                    // Запуск скачивания
+                    xhr.send()
+                })
             }
 
-            const blob = await response.blob()
+            const blob = await downloadWithProgress()
 
             // Создаем ссылку для скачивания
             const link = document.createElement('a')
@@ -152,6 +186,14 @@ export default function ReportFilesPage() {
                 newSet.delete(file.type)
                 return newSet
             })
+            // Убираем прогресс через небольшую задержку
+            setTimeout(() => {
+                setDownloadProgress(prev => {
+                    const newProgress = { ...prev }
+                    delete newProgress[file.type]
+                    return newProgress
+                })
+            }, 1000)
         }
     }
 
@@ -392,16 +434,47 @@ export default function ReportFilesPage() {
                                 <button
                                     onClick={() => downloadFile(file)}
                                     disabled={downloadingFiles.has(file.type)}
-                                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${downloadingFiles.has(file.type)
+                                    className={`w-12 h-12 rounded-lg flex items-center justify-center transition-colors relative ${downloadingFiles.has(file.type)
                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                         : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
                                         }`}
                                     title="Скачать файл"
                                 >
                                     {downloadingFiles.has(file.type) ? (
-                                        <div className="w-4 h-4 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="relative w-8 h-8">
+                                            {/* Фоновый круг */}
+                                            <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+                                                <circle
+                                                    cx="16"
+                                                    cy="16"
+                                                    r="12"
+                                                    fill="none"
+                                                    stroke="#e5e7eb"
+                                                    strokeWidth="3"
+                                                />
+                                                {/* Прогресс круг */}
+                                                <circle
+                                                    cx="16"
+                                                    cy="16"
+                                                    r="12"
+                                                    fill="none"
+                                                    stroke="#059669"
+                                                    strokeWidth="3"
+                                                    strokeLinecap="round"
+                                                    strokeDasharray={`${(downloadProgress[file.type] || 0) * 0.75} 75`}
+                                                    className="transition-all duration-300"
+                                                />
+                                            </svg>
+                                            {/* Процент в центре */}
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <span className="text-[9
+                                                    px] font-medium text-emerald-700">
+                                                    {downloadProgress[file.type] || 0}%
+                                                </span>
+                                            </div>
+                                        </div>
                                     ) : (
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                     )}

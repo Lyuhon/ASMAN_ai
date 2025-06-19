@@ -165,7 +165,7 @@ export default function RootLayout({ children }) {
           <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg telegram-webapp">
             {children}
             <Navigation />
-            <DebugLogger />
+            {/* <DebugLogger /> */}
           </div>
         </TelegramProvider>
       </body>

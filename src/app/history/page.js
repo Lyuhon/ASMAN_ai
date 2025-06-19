@@ -1766,7 +1766,7 @@ export default function HistoryPage() {
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                                 </svg>
-                                                Отправить в Telegram
+                                                Отправить PDF в Telegram
                                             </>
                                         )}
                                     </button>
@@ -1785,7 +1785,7 @@ export default function HistoryPage() {
                                         </Link>
 
                                         {/* Кнопка скачивания (как fallback) */}
-                                        <button
+                                        {/* <button
                                             onClick={() => downloadReportDirect(report.id)}
                                             className="w-10 h-10 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center transition-colors"
                                             title="Скачать PDF"
@@ -1793,7 +1793,7 @@ export default function HistoryPage() {
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </div>
                             ) : (

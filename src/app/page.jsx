@@ -292,12 +292,12 @@
 //   )
 // }
 
-
 // app/page.js
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useTelegram } from './hooks/useTelegram'
+import DashboardStats from './components/DashboardStats' // 👈 ИМПОРТ КОМПОНЕНТА
 
 export default function HomePage() {
   const {
@@ -454,14 +454,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Debug info - можно убрать в продакшене */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mb-6 p-3 bg-gray-50 rounded-lg text-xs">
-          <details>
-            <summary className="cursor-pointer text-gray-600">Debug: Данные пользователя</summary>
-            <pre className="mt-2 text-gray-800">{JSON.stringify(telegramUser, null, 2)}</pre>
-          </details>
-        </div>
+      {/* 📊 КОМПОНЕНТ СТАТИСТИКИ - добавляем только для зарегистрированных пользователей */}
+      {isRegistrationComplete() && (
+        <DashboardStats
+          user={telegramUser}
+          tg={tg}
+          language={getUserLanguage()}
+        />
       )}
 
       {/* Quick Actions */}
