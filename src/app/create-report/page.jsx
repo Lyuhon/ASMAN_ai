@@ -817,10 +817,9 @@ export default function CreateReportPage() {
                 { id: 1, title: 'Изображение', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
                 { id: 2, title: 'Видео файл', desc: 'Загрузите .ts видео файл (до 100 МБ)', field: 'video', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
                 { id: 3, title: 'Документ Word', desc: 'Загрузите .docx файл (до 20 МБ)', field: 'docx', fileType: 'docx', accept: '.docx', maxSize: '20 МБ', optional: true },
-                { id: 4, title: 'Дополнительная таблица', desc: 'Загрузите дополнительный .xlsx файл (до 50 МБ)', field: 'xlsx', fileType: 'xlsx', accept: '.xlsx', maxSize: '50 МБ', optional: true },
-                { id: 5, title: 'Основные данные', desc: 'Выберите основной XLSX файл с данными', field: 'data_file', fileType: 'data', accept: '.xlsx', maxSize: '50 МБ', optional: false },
-                { id: 6, title: 'Настройки отчета', desc: 'Язык и параметры' },
-                { id: 7, title: 'Генерация отчета', desc: 'Создание PDF' }
+                { id: 4, title: 'Таблица Excel', desc: 'Загрузите .xlsx файл (до 50 МБ)', field: 'xlsx', fileType: 'xlsx', accept: '.xlsx', maxSize: '50 МБ', optional: true },
+                { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
+                { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
             ]
         }
         return []
@@ -927,9 +926,14 @@ export default function CreateReportPage() {
     }
 
     const generateReport = async () => {
-        if (!formData.data_file) {
-            console.log('❌ Нет файла данных для отправки')
-            alert('Пожалуйста, загрузите файл данных')
+        // if (!formData.data_file) {
+        //     console.log('❌ Нет файла данных для отправки')
+        //     alert('Пожалуйста, загрузите файл данных')
+        //     return
+        // }
+        if (selectedType === 'qogi' && !formData.data_file) {
+            console.log('❌ Нет файла данных для QOGI отчета')
+            alert('Пожалуйста, загрузите CSV файл данных для QOGI отчета')
             return
         }
 
@@ -963,7 +967,9 @@ export default function CreateReportPage() {
             const formDataToSend = new FormData()
 
             // Основные данные
-            formDataToSend.append('data_file', formData.data_file)
+            if (formData.data_file) {
+                formDataToSend.append('data_file', formData.data_file)
+            }
             formDataToSend.append('language', formData.language)
             formDataToSend.append('cubic_metr', formData.cubic_metr.toString())
             formDataToSend.append('telegram_user_id', user.id.toString())
@@ -1329,10 +1335,12 @@ export default function CreateReportPage() {
                                                     <span className="text-gray-600">Тип отчета:</span>
                                                     <span className="font-medium">{selectedType?.toUpperCase()}</span>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-gray-600">Файл данных:</span>
-                                                    <span className="font-medium">{formData.data_file?.name}</span>
-                                                </div>
+                                                {formData.data_file && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Файл данных:</span>
+                                                        <span className="font-medium">{formData.data_file?.name}</span>
+                                                    </div>
+                                                )}
                                                 {formData.image && (
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Изображение:</span>
@@ -1365,7 +1373,7 @@ export default function CreateReportPage() {
                                                 )}
                                                 {formData.xlsx && (
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Доп. таблица:</span>
+                                                        <span className="text-gray-600">Таблица Excel:</span>
                                                         <span className="font-medium">✓ Загружено</span>
                                                     </div>
                                                 )}
