@@ -817,7 +817,7 @@ export default function CreateReportPage() {
                 { id: 1, title: 'Изображение', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
                 { id: 2, title: 'Видео файл', desc: 'Загрузите .ts видео файл (до 100 МБ)', field: 'video', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
                 { id: 3, title: 'Документ Word', desc: 'Загрузите .docx файл (до 20 МБ)', field: 'docx', fileType: 'docx', accept: '.docx', maxSize: '20 МБ', optional: true },
-                { id: 4, title: 'Таблица Excel', desc: 'Загрузите .xlsx файл (до 50 МБ)', field: 'xlsx', fileType: 'xlsx', accept: '.xlsx', maxSize: '50 МБ', optional: true },
+                { id: 4, title: 'Таблица Excel', desc: 'Загрузите .xlsx файл (до 50 МБ)', field: 'data_file', fileType: 'data', accept: '.xlsx', maxSize: '50 МБ', optional: false },
                 { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
                 { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
             ]
