@@ -2507,6 +2507,9 @@ import Link from 'next/link'
 import { useTelegramContext } from '../contexts/TelegramContext'
 
 export default function CreateReportPage() {
+
+    const [notification, setNotification] = useState(null)
+
     const router = useRouter()
     const { user, tg, isLoading: userLoading } = useTelegramContext()
     const [currentStep, setCurrentStep] = useState(0)
@@ -2566,15 +2569,15 @@ export default function CreateReportPage() {
                 { id: 1, title: 'Изображение OPGAL', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
                 { id: 2, title: 'Первое видео', desc: 'Загрузите первый .ts файл (до 100 МБ)', field: 'video1', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
                 { id: 3, title: 'Второе видео', desc: 'Загрузите второй .ts файл (до 100 МБ)', field: 'video2', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
-                { id: 4, title: 'Данные CSV', desc: 'Выберите CSV файл с данными', field: 'data_file', fileType: 'data', accept: '.csv', maxSize: '10 МБ', optional: false },
+                { id: 4, title: 'Данные CSV', desc: 'Выберите CSV файл с данными', field: 'data_file', fileType: 'data', accept: '.csv', maxSize: '10 МБ', optional: true },
                 { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
                 { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
             ]
         } else if (type === 'eyecsite') {
             return [
-                { id: 1, title: 'Изображение', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: true },
-                { id: 2, title: 'Видео файл', desc: 'Загрузите .ts видео файл (до 100 МБ)', field: 'video', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: true },
-                { id: 3, title: 'Документ Word', desc: 'Загрузите .docx файл (до 20 МБ)', field: 'docx', fileType: 'docx', accept: '.docx', maxSize: '20 МБ', optional: true },
+                { id: 1, title: 'Изображение', desc: 'Загрузите изображение (до 5 МБ)', field: 'image', fileType: 'image', accept: 'image/*', maxSize: '5 МБ', optional: false },
+                { id: 2, title: 'Видео файл', desc: 'Загрузите .ts видео файл (до 100 МБ)', field: 'video', fileType: 'video', accept: '.ts', maxSize: '100 МБ', optional: false },
+                { id: 3, title: 'Документ Word', desc: 'Загрузите .docx файл (до 20 МБ)', field: 'docx', fileType: 'docx', accept: '.docx', maxSize: '20 МБ', optional: false },
                 { id: 4, title: 'Таблица Excel', desc: 'Загрузите .xlsx файл (до 50 МБ)', field: 'data_file', fileType: 'data', accept: '.xlsx', maxSize: '50 МБ', optional: false },
                 { id: 5, title: 'Настройки отчета', desc: 'Язык и параметры' },
                 { id: 6, title: 'Генерация отчета', desc: 'Создание PDF' }
@@ -2851,6 +2854,41 @@ export default function CreateReportPage() {
                 return
             }
 
+            // if (result.success) {
+            //     console.log('✅ Отчет успешно создан!')
+            //     console.log('📊 Данные отчета:', {
+            //         report_id: result.report_id,
+            //         file_path: result.file_path,
+            //         download_url: result.download_url
+            //     })
+
+            //     alert(`Отчет ${selectedType.toUpperCase()} успешно создан! ID: ${result.report_id}`)
+
+            //     // Сброс формы ПЕРЕД редиректом
+            //     console.log('🔄 Сбрасываем форму')
+            //     setFormData({
+            //         image: null,
+            //         video1: null,
+            //         video2: null,
+            //         video: null,
+            //         docx: null,
+            //         xlsx: null,
+            //         data_file: null,
+            //         language: 'ru',
+            //         cubic_metr: false
+            //     })
+            //     setCurrentStep(0)
+            //     setSelectedType(null)
+            //     setUploadProgress({ loaded: 0, total: 0, progress: 0, isUploading: false })
+
+            //     // Редирект на страницу истории
+            //     console.log('🔄 Перенаправляем на страницу истории')
+            //     router.push('/history')
+            // } else {
+            //     console.log('❌ Ошибка от API:', result)
+            //     alert(`Ошибка создания отчета: ${result.message || 'Неизвестная ошибка'}`)
+            // }
+
             if (result.success) {
                 console.log('✅ Отчет успешно создан!')
                 console.log('📊 Данные отчета:', {
@@ -2859,39 +2897,82 @@ export default function CreateReportPage() {
                     download_url: result.download_url
                 })
 
-                alert(`Отчет ${selectedType.toUpperCase()} успешно создан! ID: ${result.report_id}`)
-
-                // Сброс формы ПЕРЕД редиректом
-                console.log('🔄 Сбрасываем форму')
-                setFormData({
-                    image: null,
-                    video1: null,
-                    video2: null,
-                    video: null,
-                    docx: null,
-                    xlsx: null,
-                    data_file: null,
-                    language: 'ru',
-                    cubic_metr: false
+                // Показываем уведомление об успехе
+                setNotification({
+                    type: 'success',
+                    title: 'Отчет создан успешно!',
+                    message: `Отчет ${selectedType.toUpperCase()} создан. ID: ${result.report_id}`,
+                    action: () => {
+                        // Сброс формы
+                        setFormData({
+                            image: null,
+                            video1: null,
+                            video2: null,
+                            video: null,
+                            docx: null,
+                            xlsx: null,
+                            data_file: null,
+                            language: 'ru',
+                            cubic_metr: false
+                        })
+                        setCurrentStep(0)
+                        setSelectedType(null)
+                        setUploadProgress({ loaded: 0, total: 0, progress: 0, isUploading: false })
+                        setNotification(null)
+                        // Перенаправляем на историю
+                        router.push('/history')
+                    }
                 })
-                setCurrentStep(0)
-                setSelectedType(null)
-                setUploadProgress({ loaded: 0, total: 0, progress: 0, isUploading: false })
-
-                // Редирект на страницу истории
-                console.log('🔄 Перенаправляем на страницу истории')
-                router.push('/history')
             } else {
                 console.log('❌ Ошибка от API:', result)
-                alert(`Ошибка создания отчета: ${result.message || 'Неизвестная ошибка'}`)
+
+                // Проверяем, это ошибка uncertainty или обычная ошибка
+                if (result.error === 'uncertainty_too_high') {
+                    setNotification({
+                        type: 'error',
+                        title: 'Отчет отклонен',
+                        message: `Неопределенность ${result.data?.uncertainty_percentage}% превышает максимальные 45%. Переделайте отчет.`,
+                        action: () => {
+                            setNotification(null)
+                            // Возвращаем на начало
+                            setCurrentStep(0)
+                            setSelectedType(null)
+                            setFormData({
+                                image: null,
+                                video1: null,
+                                video2: null,
+                                video: null,
+                                docx: null,
+                                xlsx: null,
+                                data_file: null,
+                                language: 'ru',
+                                cubic_metr: false
+                            })
+                        }
+                    })
+                } else {
+                    setNotification({
+                        type: 'error',
+                        title: 'Ошибка создания отчета',
+                        message: result.message || 'Неизвестная ошибка',
+                        action: () => {
+                            setNotification(null)
+                        }
+                    })
+                }
             }
         } catch (error) {
             console.error('💥 Критическая ошибка при отправке запроса:', error)
-            alert('Ошибка соединения с сервером. Проверьте консоль для деталей.')
-            // } finally {
-            //     console.log('🏁 Завершение процесса генерации отчета')
-            //     setIsGenerating(false)
-            // }
+            // alert('Ошибка соединения с сервером. Проверьте консоль для деталей.')
+            // ДОБАВИТЬ ВМЕСТО НЕЕ:
+            setNotification({
+                type: 'error',
+                title: 'Ошибка соединения',
+                message: 'Не удалось подключиться к серверу. Попробуйте позже.',
+                action: () => {
+                    setNotification(null)
+                }
+            })
         } finally {
             console.log('🏁 Завершение процесса генерации отчета')
             setIsGenerating(false)
@@ -3253,6 +3334,52 @@ export default function CreateReportPage() {
 
                 </>
             )}
+
+            {notification && (
+                <div className="fixed inset-0 bg-[#00000017] bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+                        <div className="text-center">
+                            {/* Иконка */}
+                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${notification.type === 'success'
+                                ? 'bg-emerald-100'
+                                : 'bg-red-100'
+                                }`}>
+                                {notification.type === 'success' ? (
+                                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                )}
+                            </div>
+
+                            {/* Заголовок */}
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                {notification.title}
+                            </h3>
+
+                            {/* Сообщение */}
+                            <p className="text-gray-600 mb-6">
+                                {notification.message}
+                            </p>
+
+                            {/* Кнопка */}
+                            <button
+                                onClick={notification.action}
+                                className={`w-full py-3 px-4 rounded-xl font-medium text-white transition-all ${notification.type === 'success'
+                                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                                    : 'bg-red-600 hover:bg-red-700'
+                                    }`}
+                            >
+                                {notification.type === 'success' ? 'Перейти к истории' : 'Закрыть'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     )
 }
